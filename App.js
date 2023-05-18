@@ -19,9 +19,15 @@ function ExpensesOverView() {
   return (
     <Tab.Navigator
       screenOptions={({ navigation }) => ({
-        headerStyle: { backgroundColor: GlobalStyles.colors.lightNavy },
+        headerStyle: {
+          backgroundColor: GlobalStyles.colors.lightNavy,
+          shadowOffset: { width: 0, height: 0 },
+        },
         headerTintColor: "white",
-        tabBarStyle: { backgroundColor: GlobalStyles.colors.lightNavy },
+        tabBarStyle: {
+          backgroundColor: GlobalStyles.colors.lightNavy,
+          borderTopWidth: 0,
+        },
         tabBarActiveTintColor: GlobalStyles.colors.accent,
         headerRight: ({ tintColor }) => {
           return (
@@ -72,8 +78,9 @@ export default function App() {
           <Stack.Navigator
             initialRouteName="ExpensesOverView"
             screenOptions={{
-              headerStyle: { backgroundColor: GlobalStyles.colors.darkTeal },
-              headerTintColor: "white",
+              headerStyle: {
+                backgroundColor: GlobalStyles.colors.darkTeal,
+              },
             }}
           >
             <Stack.Screen
