@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import React, { createContext, useReducer } from "react";
 
 const DUMMY_EXPENSES = [
   {
@@ -24,6 +24,12 @@ const DUMMY_EXPENSES = [
     description: "음료수",
     amount: 1500,
     date: new Date("2023-03-03"),
+  },
+  {
+    id: "e5",
+    description: "쇼파2",
+    amount: 120000,
+    date: new Date("2023-05-13"),
   },
 ];
 
@@ -60,17 +66,28 @@ function expensesReducer(state, action) {
 export default function ExpensesContextProvider({ children }) {
   const [expensesState, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES); //useReducer(리듀서함수, 초기값)
 
-  function addExpenses(expenseData) {
+  function addExpense(expenseData) {
     //expenseData가 action을 dispatch해서 reducer함수로 전달함
     dispatch({ type: "ADD", payload: expenseData }); //type or mode or kind ... payload or data..
   }
-  function deleteExpenses(id) {
+  function deleteExpense(id) {
     dispatch({ type: "DELETE", payload: id });
   }
 
-  function updateExpenses(id, expenseData) {
+  function updateExpense(id, expenseData) {
     dispatch({ type: "UPDATE", payload: { id: id, data: expenseData } });
   }
 
-  return <ExpensesContext.Provider>{children}</ExpensesContext.Provider>;
+  const value = {
+    expenses: expensesState,
+    addExpense,
+    deleteExpense,
+    updateExpense,
+  };
+
+  return (
+    <ExpensesContext.Provider value={value}>
+      {children}
+    </ExpensesContext.Provider>
+  );
 }
