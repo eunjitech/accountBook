@@ -7,6 +7,6 @@ export const GlobalStyles = {
     black: "#1F2124",
     accent: "#F9F871",
     error50: "#D37CA3",
-    error500: "#973843",
+    error500: "#FF0000",
   },
 };
