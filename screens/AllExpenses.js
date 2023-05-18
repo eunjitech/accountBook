@@ -1,19 +1,11 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import ExpensesOutput from "../components/ExpensesOutput/ExpensesOutput";
 
 import { GlobalStyles } from "../constants/styles";
 
 export default function AllExpenses() {
-  return (
-    <View>
-      <Text style={{ color: "#000" }}>All</Text>
-      <Text>All</Text>
-      <Text>All</Text>
-      <Text>All</Text>
-      <Text>All</Text>
-      <Text>All</Text>
-    </View>
-  );
+  return <ExpensesOutput expensesPeriodName="Total" />;
 }
 
 const styles = StyleSheet.create({});
