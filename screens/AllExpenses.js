@@ -11,6 +11,7 @@ export default function AllExpenses() {
     <ExpensesOutput
       expenses={expensesCtx.expenses}
       expensesPeriodName="Total"
+      fallBackText="지출 항목이 없습니다."
     />
   );
 }

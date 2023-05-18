@@ -13,13 +13,14 @@ export default function RecentExpenses() {
     const today = new Date();
     const date7DaysAge = getDateMinusDays(today, 7);
 
-    return expense.date > date7DaysAge;
+    return expense.date >= date7DaysAge && expense.date <= today; //미래 날짜가 출력되지 않게
   });
 
   return (
     <ExpensesOutput
       expenses={recentExpenses}
       expensesPeriodName="Last 7 Days"
+      fallBackText="지출 항목이 없습니다."
     />
   );
 }
