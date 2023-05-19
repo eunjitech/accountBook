@@ -8,10 +8,12 @@ import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import { deleteExpense, storeExpense, updateExpense } from "../utils/http";
 import LoadingOVerlay from "../components/UI/LoadingOVerlay";
+import ErrorOverlay from "../components/UI/ErrorOverlay";
 
 export default function ManageExpenses({ route, navigation }) {
   const expenseCtx = useContext(ExpensesContext);
   const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(null);
 
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
@@ -27,9 +29,14 @@ export default function ManageExpenses({ route, navigation }) {
 
   async function deleteExpenseHandler() {
     setIsFetching(true);
-    await deleteExpense(editedExpenseId);
-    expenseCtx.deleteExpense(editedExpenseId);
-    navigation.goBack();
+    try {
+      await deleteExpense(editedExpenseId);
+      expenseCtx.deleteExpense(editedExpenseId);
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not delete expense!");
+      setIsFetching(false);
+    }
   }
 
   function cancelHandler() {
@@ -38,20 +45,33 @@ export default function ManageExpenses({ route, navigation }) {
 
   async function confirmHandler(expenseData) {
     setIsFetching(true);
-    if (isEditing) {
-      //변경
-      expenseCtx.updateExpense(editedExpenseId, expenseData); //로컬에서 먼저 업데이트
-      await updateExpense(editedExpenseId, expenseData); //응답을 기다린 후 페이지전환
-    } else {
-      //추가
-      const id = await storeExpense(expenseData); //백엔드에 추가 후 아이디를 얻음
-      expenseCtx.addExpense({ ...expenseData, id: id });
+    try {
+      if (isEditing) {
+        //변경
+        expenseCtx.updateExpense(editedExpenseId, expenseData); //로컬에서 먼저 업데이트
+        await updateExpense(editedExpenseId, expenseData); //응답을 기다린 후 페이지전환
+      } else {
+        //추가
+        const id = await storeExpense(expenseData); //백엔드에 추가 후 아이디를 얻음
+        expenseCtx.addExpense({ ...expenseData, id: id });
+      }
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not save expense! - please try again later");
+      setIsFetching(false);
     }
-    navigation.goBack();
+  }
+
+  function errorHandler() {
+    setError(null);
   }
 
   if (isFetching) {
     return <LoadingOVerlay />;
+  }
+
+  if (error && !isFetching) {
+    return <ErrorOverlay message={error} onConfirm={errorHandler} />;
   }
 
   return (

@@ -7,26 +7,40 @@ import { getDateMinusDays } from "../utils/date";
 import { GlobalStyles } from "../constants/styles";
 import { fetchExpenses } from "../utils/http";
 import LoadingOVerlay from "../components/UI/LoadingOVerlay";
+import ErrorOverlay from "../components/UI/ErrorOverlay";
 
 export default function RecentExpenses() {
   const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState(null);
   const expensesCtx = useContext(ExpensesContext);
   // const [fetchedExpenses, setFetchedExpenses] = useState([]); -> context에 저장하지 않으면 백그라운드에서 addpage가 돌기 때문에 새로고침하지 않는 이상 데이터 업데이트가 불가(navigator로 제어하는 방법도 있음)
 
   useEffect(() => {
     async function getExpenses() {
       setIsFetching(true);
-      const expenses = await fetchExpenses(); //함수안에 감싸는 구조: useEffect이 비동기 함수로 됨을 권장하지 않음
+      try {
+        const expenses = await fetchExpenses(); //함수안에 감싸는 구조: useEffect이 비동기 함수로 됨을 권장하지 않음
+        expensesCtx.setExpenses(expenses);
+      } catch (error) {
+        setError("Could not fetch expenses!");
+      }
       setIsFetching(false);
       // setFetchedExpenses(expenses);
-      expensesCtx.setExpenses(expenses);
     }
 
     getExpenses();
   }, []);
 
+  function errorHandler() {
+    setError(null);
+  }
+
   if (isFetching) {
     return <LoadingOVerlay />;
+  }
+
+  if (error && !isFetching) {
+    return <ErrorOverlay message={error} onConfirm={errorHandler} />;
   }
 
   const recentExpenses = expensesCtx.expenses.filter((expense) => {
