@@ -1,40 +1,8 @@
 import React, { createContext, useReducer } from "react";
 
-const DUMMY_EXPENSES = [
-  {
-    id: "e1",
-    description: "신발 한 켤레",
-    amount: 70000,
-    date: new Date("2023-02-04"),
-  },
-  {
-    id: "e2",
-    description: "쇼파",
-    amount: 120000,
-    date: new Date("2023-05-14"),
-  },
-  {
-    id: "e3",
-    description: "책",
-    amount: 6000,
-    date: new Date("2023-01-29"),
-  },
-  {
-    id: "e4",
-    description: "음료수",
-    amount: 1500,
-    date: new Date("2023-03-03"),
-  },
-  {
-    id: "e5",
-    description: "쇼파2",
-    amount: 120000,
-    date: new Date("2023-05-13"),
-  },
-];
-
 export const ExpensesContext = React.createContext({
   expenses: [],
+  setExpenses: (expense) => {},
   addExpense: ({ description, amount, date }) => {},
   deleteExpense: (id) => {},
   updateExpense: (id, { description, amount, date }) => {},
@@ -44,6 +12,8 @@ export const ExpensesContext = React.createContext({
 //여기서 수신된 action의 타입을 확인할 수 있음
 function expensesReducer(state, action) {
   switch (action.type) {
+    case "SET":
+      return action.payload;
     case "ADD":
       const id = new Date().toString() + Math.random().toString();
       return [{ ...action.payload, id: id }, ...state];
@@ -64,7 +34,11 @@ function expensesReducer(state, action) {
 } //action이 없다면 기존 state그대로, 케이스 중 하나라면 state는 우리가 조종한 형태로
 
 export default function ExpensesContextProvider({ children }) {
-  const [expensesState, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES); //useReducer(리듀서함수, 초기값)
+  const [expensesState, dispatch] = useReducer(expensesReducer, []); //useReducer(리듀서함수, 초기값)
+
+  function setExpenses(expenses) {
+    dispatch({ type: "SET", payload: expenses });
+  }
 
   function addExpense(expenseData) {
     //expenseData가 action을 dispatch해서 reducer함수로 전달함
@@ -80,6 +54,7 @@ export default function ExpensesContextProvider({ children }) {
 
   const value = {
     expenses: expensesState,
+    setExpenses,
     addExpense,
     deleteExpense,
     updateExpense,
