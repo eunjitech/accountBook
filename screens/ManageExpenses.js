@@ -32,14 +32,14 @@ export default function ManageExpenses({ route, navigation }) {
     navigation.goBack(); //화면을 열었던 화면으로 이동
   }
 
-  function confirmHandler(expenseData) {
+  async function confirmHandler(expenseData) {
     if (isEditing) {
       //변경
       expenseCtx.updateExpense(editedExpenseId, expenseData);
     } else {
       //추가
-      storeExpense(expenseData);
-      expenseCtx.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      expenseCtx.addExpense({ ...expenseData, id: id });
     }
     navigation.goBack();
   }

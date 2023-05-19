@@ -13,10 +13,11 @@ export const ExpensesContext = React.createContext({
 function expensesReducer(state, action) {
   switch (action.type) {
     case "SET":
-      return action.payload;
+      const iverted = action.payload.reverse();
+      return iverted;
     case "ADD":
-      const id = new Date().toString() + Math.random().toString();
-      return [{ ...action.payload, id: id }, ...state];
+      // const id = new Date().toString() + Math.random().toString(); firebase가 id를 자동생성함
+      return [action.payload, ...state];
     case "UPDATE":
       const updatableExpenseIndex = state.findIndex(
         (expense) => expense.id === action.payload.id
