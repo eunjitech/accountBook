@@ -6,7 +6,7 @@ import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
-import { storeExpense } from "../utils/http";
+import { deleteExpense, storeExpense, updateExpense } from "../utils/http";
 
 export default function ManageExpenses({ route, navigation }) {
   const expenseCtx = useContext(ExpensesContext);
@@ -23,7 +23,8 @@ export default function ManageExpenses({ route, navigation }) {
     });
   }, [navigation, isEditing]);
 
-  function deleteExpenseHandler() {
+  async function deleteExpenseHandler() {
+    await deleteExpense(editedExpenseId);
     expenseCtx.deleteExpense(editedExpenseId);
     navigation.goBack();
   }
@@ -35,10 +36,11 @@ export default function ManageExpenses({ route, navigation }) {
   async function confirmHandler(expenseData) {
     if (isEditing) {
       //변경
-      expenseCtx.updateExpense(editedExpenseId, expenseData);
+      expenseCtx.updateExpense(editedExpenseId, expenseData); //로컬에서 먼저 업데이트
+      await updateExpense(editedExpenseId, expenseData); //응답을 기다린 후 페이지전환
     } else {
       //추가
-      const id = await storeExpense(expenseData);
+      const id = await storeExpense(expenseData); //백엔드에 추가 후 아이디를 얻음
       expenseCtx.addExpense({ ...expenseData, id: id });
     }
     navigation.goBack();
