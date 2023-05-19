@@ -15,15 +15,15 @@ export default function ExpenseForm({
   const [inputs, setInputs] = useState({
     amount: {
       value: defaultValues ? defaultValues.amount.toString() : "",
-      isValid: !!defaultValues, //defaultValues없으면 false
+      isValid: true, //defaultValues없으면 false
     },
     date: {
       value: defaultValues ? getFormattedDate(defaultValues.date) : "",
-      isValid: !!defaultValues,
+      isValid: true,
     },
     description: {
       value: defaultValues ? defaultValues.description : "",
-      isValid: !!defaultValues,
+      isValid: true,
     },
   });
 
@@ -43,7 +43,7 @@ export default function ExpenseForm({
       description: inputs.description.value,
     };
 
-    const amountIsValid = !isNaN(expenseData.amout) && expenseData.amount > 0;
+    const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
     const dateIsValid = expenseData.date.toString() !== "Invalid Date";
     const descriptionIsValid = expenseData.description.trim().length > 0;
 

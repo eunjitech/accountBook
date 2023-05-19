@@ -1,18 +1,12 @@
 import React, { useLayoutEffect, useContext } from "react";
-import {
-  StyleSheet,
-  KeyboardAvoidingView,
-  Text,
-  Platform,
-  View,
-  TextInput,
-} from "react-native";
+import { StyleSheet, KeyboardAvoidingView, View } from "react-native";
 
 import IconButton from "../components/UI/IconButton";
 
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
+import { storeExpense } from "../utils/http";
 
 export default function ManageExpenses({ route, navigation }) {
   const expenseCtx = useContext(ExpensesContext);
@@ -40,8 +34,11 @@ export default function ManageExpenses({ route, navigation }) {
 
   function confirmHandler(expenseData) {
     if (isEditing) {
+      //변경
       expenseCtx.updateExpense(editedExpenseId, expenseData);
     } else {
+      //추가
+      storeExpense(expenseData);
       expenseCtx.addExpense(expenseData);
     }
     navigation.goBack();
