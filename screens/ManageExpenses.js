@@ -1,8 +1,15 @@
 import React, { useLayoutEffect, useContext } from "react";
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import {
+  StyleSheet,
+  KeyboardAvoidingView,
+  Text,
+  Platform,
+  View,
+  TextInput,
+} from "react-native";
 
 import IconButton from "../components/UI/IconButton";
-import Button from "../components/Button";
+
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
@@ -28,60 +35,46 @@ export default function ManageExpenses({ route, navigation }) {
     navigation.goBack(); //화면을 열었던 화면으로 이동
   }
 
-  function confirmHandler() {
+  function confirmHandler(expenseData) {
     if (isEditing) {
-      expenseCtx.updateExpense(editedExpenseId, {
-        description: "Test",
-        amount: 3000,
-        date: new Date("2023-05-18"),
-      });
+      expenseCtx.updateExpense(editedExpenseId, expenseData);
     } else {
-      expenseCtx.addExpense({
-        description: "Test",
-        amount: 3000,
-        date: new Date("2023-05-18"),
-      });
+      expenseCtx.addExpense(expenseData);
     }
     navigation.goBack();
   }
 
   return (
     <View style={styles.container}>
-      <ExpenseForm />
-      <View style={styles.buttons}>
-        <Button style={styles.button} mode="flat" onPress={cancelHandler}>
-          Cancel
-        </Button>
-        <Button style={styles.button} onPress={confirmHandler}>
-          {isEditing ? "Update" : "Add"}
-        </Button>
-      </View>
-      {isEditing && (
-        <View style={styles.deleteContainer}>
-          <IconButton
-            icon="trash"
-            color={GlobalStyles.colors.error500}
-            size={36}
-            onPress={deleteExpenseHandler}
-          />
-        </View>
-      )}
+      <KeyboardAvoidingView style={styles.screen} behavior="position">
+        <ExpenseForm
+          onCancel={cancelHandler}
+          submitButtonLabel={isEditing ? "Update" : "Add"}
+          onSubmit={confirmHandler}
+        />
+        {isEditing && (
+          <View style={styles.deleteContainer}>
+            <IconButton
+              icon="trash"
+              color={GlobalStyles.colors.error500}
+              size={36}
+              onPress={deleteExpenseHandler}
+            />
+          </View>
+        )}
+      </KeyboardAvoidingView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: { flex: 1 },
   container: {
     flex: 1,
     padding: 24,
     backgroundColor: GlobalStyles.colors.darkNavy,
   },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: { minWidth: 120, marginHorizontal: 8 },
+
   deleteContainer: {
     paddingTop: 8,
     marginTop: 16,

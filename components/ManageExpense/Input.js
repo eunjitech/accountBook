@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, TextInput } from "react-native";
+
 import { GlobalStyles } from "../../constants/styles";
 
 export default function Input({ label, style, textInputConfig }) {
